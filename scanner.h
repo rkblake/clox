@@ -1,6 +1,7 @@
 #ifndef SCANNER_H
 #define SCANNER_H
 
+#include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
 

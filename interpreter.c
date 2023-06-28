@@ -19,12 +19,12 @@ void run(char *text, size_t size) {
     size_t num_tokens = 0;
     LinkedList *tokens = create_list();
     scan_tokens(text, size, &num_tokens, tokens);
-    printf("%ld\n", num_tokens);
+    // printf("%ld\n", num_tokens);
 
-    int i;
-    for (i = 0; i < num_tokens; i++) {
-        // Node* node = list_at(&tokens, i);
-        // printf("%ld\n", ((Token*)(node->data))->type);
+    Node *node = tokens->head;
+    while (node->next != NULL) {
+        // printf("%ld\n", ((Token *)(node->data))->type);
+        node = node->next;
     }
 }
 
@@ -40,18 +40,16 @@ int run_file(char *path) {
 
     char *text;
     text = (char *)malloc(size * sizeof(char));
-    fgets(text, size, fp);
+    // fgets(text, size, fp);
+    int i = 0;
+    for (; i < size; i++) { text[i] = fgetc(fp); }
 
-    if (text) {
-        run(text, size);
-    }
+    if (text) { run(text, size); }
 
     free(text);
     fclose(fp);
 
-    if (had_error) {
-        return 65;
-    }
+    if (had_error) { return 65; }
 
     return 0;
 }

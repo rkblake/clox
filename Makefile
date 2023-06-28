@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-I. -g -Wall
 OBJ := $(patsubst %.c,%.o,$(wildcard *.c))
-TARGET = Clox
+TARGET = clox
 
 $(TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $@ $(CFLAGS)
