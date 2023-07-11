@@ -1,0 +1,12 @@
+apple > orange;
+five == two;
+(7+3)*2-3;
+
+if (5+7>3) {
+    print nine;
+}
+
+fun fib(a, b) {
+    var a = 5;
+    var b = 32;
+}

@@ -10,7 +10,7 @@ size_t length;
 
 char advance() { return text[current++]; }
 char peek_next() { return text[current + 1]; }
-bool is_at_end() { return !(current >= length); }
+bool is_at_end() { return (current >= length); }
 bool is_digit(char c) { return c >= '0' && c <= '9'; }
 char peek() { return text[current]; }
 bool is_alpha(char c) {
@@ -32,7 +32,7 @@ bool match_next(char match) {
     return true;
 }
 
-Token *string() {
+void string(Token *token) {
     size_t start = current + 1;
     while (text[current + 1] != '"' && !(current >= length)) {
         if (text[current + 1] == '\n') line++;
@@ -44,15 +44,15 @@ Token *string() {
     advance();
 
     char *string = (char *)malloc(current - start);
-    Token *token = (Token *)malloc(sizeof(Token));
+    // Token *token = (Token *)malloc(sizeof(Token));
     token->line = line;
     token->type = STRING;
     token->literal = string;
     memcpy(string, text + current, current - start);
-    return token;
+    // return token;
 }
 
-Token *number() {
+void number(Token *token) {
     size_t start = current;
     while (is_digit(peek())) advance();
     if (peek() == '.' && is_digit(peek_next())) {
@@ -60,7 +60,7 @@ Token *number() {
         while (is_digit(peek())) advance();
     }
     char *string = (char *)malloc(current - start);
-    Token *token = (Token *)malloc(sizeof(Token));
+    // Token *token = (Token *)malloc(sizeof(Token));
     token->line = line;
     token->type = NUMBER;
     memcpy(string, text + current, current - start);
@@ -68,16 +68,17 @@ Token *number() {
     *num = atof(string);
     token->literal = num;
     free(string);
-    return token;
+    // return token;
 }
 
-Token *identifier() {
+void identifier(Token *token) {
     // size_t start;
-    Token *token = (Token *)malloc(sizeof(Token));
-
+    // Token *token = (Token *)malloc(sizeof(Token));
     token->type = IDENTIFIER;
 
-    return token;
+    while (is_alphanumeric(peek())) advance();
+
+    // return token;
 }
 
 void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
@@ -86,7 +87,7 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
     text = _text;
     length = _length;
 
-    while (!(current >= length)) {
+    while (!is_at_end()) {
         Token *token = (Token *)malloc(sizeof(Token));
         char c = text[current];
         switch (c) {
@@ -150,20 +151,18 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
             line++;
             goto skip_add;
         case '\0':
-            token->type = _EOF;
+            token->type = ENDOFFILE;
             break;
         case '"':
-            token = string();
+            string(token);
             break;
-        // case 'o':
-        // if (match_next('r'))
-        // token->type = OR;
-        // break;
         default:
             if (is_digit(text[current])) {
-                number();
+                number(token);
+                break;
             } else if (is_alpha(peek())) {
-                identifier();
+                identifier(token);
+                break;
             }
             if (strcicmp(&text[current], "and")) token->type = AND;
             if (strcicmp(&text[current], "class")) token->type = CLASS;
@@ -180,7 +179,7 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
             if (strcicmp(&text[current], "true")) token->type = TRUE;
             if (strcicmp(&text[current], "var")) token->type = VAR;
             if (strcicmp(&text[current], "while")) token->type = WHILE;
-            fprintf(stderr, "Unexpected character: %c\n", c);
+            fprintf(stderr, "Unexpected character: %c on line: %ld\n", c, line);
             break;
         }
         printf("%ld\n", token->type);

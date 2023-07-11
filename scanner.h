@@ -7,47 +7,32 @@
 
 #include "linkedlist.h"
 
+// clang-format off
 enum TOKEN_TYPE {
-    LEFT_PAREN,
-    RIGHT_PAREN,
-    LEFT_BRACE,
-    RIGHT_BRACE,
-    COMMA,
-    DOT,
-    MINUS,
-    PLUS,
+    LEFT_PAREN, RIGHT_PAREN,
+    LEFT_BRACE, RIGHT_BRACE,
+    COMMA, DOT, STAR, SLASH,
+    MINUS, PLUS,
     SEMICOLON,
-    SLASH,
-    STAR,
-    BANG,
-    BANG_EQUAL,
-    EQUAL,
-    EQUAL_EQUAL,
-    GREATER,
-    GREATER_EQUAL,
-    LESS,
-    LESS_EQUAL,
-    IDENTIFIER,
-    STRING,
-    NUMBER,
-    AND,
-    OR,
+    BANG, BANG_EQUAL,
+    EQUAL, EQUAL_EQUAL,
+    GREATER, GREATER_EQUAL,
+    LESS, LESS_EQUAL,
+    IDENTIFIER, STRING, NUMBER,
+    AND, OR,
     CLASS,
-    IF,
-    ELSE,
-    TRUE,
-    FALSE,
+    IF, ELSE,
+    TRUE, FALSE,
     FUN,
-    FOR,
-    WHILE,
+    FOR, WHILE,
     NIL,
     PRINT,
     RETURN,
-    SUPER,
-    THIS,
+    SUPER, THIS,
     VAR,
-    _EOF
+    ENDOFFILE
 };
+// clang-format on
 
 typedef struct Token {
     size_t type;

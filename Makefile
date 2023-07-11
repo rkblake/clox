@@ -1,4 +1,4 @@
-CC=gcc
+CC=clang
 CFLAGS=-I. -g -Wall
 OBJ := $(patsubst %.c,%.o,$(wildcard *.c))
 TARGET = clox
