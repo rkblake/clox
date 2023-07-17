@@ -1,7 +1,7 @@
 #pragma once
 
-#include "syntax.h"
-#include "scanner.h"
 #include "linkedlist.h"
+#include "scanner.h"
+#include "syntax.h"
 
-Program* parse(LinkedList* tokens);
+Program *parse(LinkedList *tokens);

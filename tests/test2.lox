@@ -10,3 +10,5 @@ fun fib(a, b) {
     var a = 5;
     var b = 32;
 }
+
+var c = "apple";

@@ -18,17 +18,17 @@ typedef struct {
 typedef union {
     int integer;
     float floating_point;
-    char* string;
+    char *string;
 } Object;
 
 typedef struct {
     Expr left;
-    Token operator;
+    // Token operator;
     Expr right;
 } Binary;
 
 typedef struct {
-    Token operator;
+    // Token operator;
     Expr expr;
 } Unary;
 
