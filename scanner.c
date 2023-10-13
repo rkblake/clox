@@ -87,6 +87,7 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
 
     while (!is_at_end()) {
         Token *token = (Token *)malloc(sizeof(Token));
+        token->type = -1;
         char c = text[current];
         switch (c) {
             case '(':
@@ -148,6 +149,7 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
                 goto skip_add;
             case '\n':
                 line++;
+                free(token);
                 goto skip_add;
             case '\0':
                 token->type = ENDOFFILE;
@@ -156,28 +158,51 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
                 string(token);
                 break;
             default:
-                if (is_digit(text[current])) {
+                if (is_digit(peek())) {
                     number(token);
                     break;
-                } else if (is_alpha(peek())) {
+                } /*else if (is_alpha(peek())) {
+                    identifier(token);
+                    break;
+                }*/
+                else if (strcicmp(&text[current], "and") == 0)
+                    token->type = AND;
+                else if (strcicmp(&text[current], "class") == 0)
+                    token->type = CLASS;
+                else if (strcicmp(&text[current], "else") == 0)
+                    token->type = ELSE;
+                else if (strcicmp(&text[current], "false") == 0)
+                    token->type = FALSE;
+                else if (strcicmp(&text[current], "for") == 0)
+                    token->type = FOR;
+                else if (strcicmp(&text[current], "if") == 0)
+                    token->type = IF;
+                else if (strcicmp(&text[current], "nil") == 0)
+                    token->type = NIL;
+                else if (strcicmp(&text[current], "or") == 0)
+                    token->type = OR;
+                else if (strcicmp(&text[current], "print") == 0)
+                    token->type = PRINT;
+                else if (strcicmp(&text[current], "return") == 0)
+                    token->type = RETURN;
+                else if (strcicmp(&text[current], "super") == 0)
+                    token->type = SUPER;
+                else if (strcicmp(&text[current], "this") == 0)
+                    token->type = THIS;
+                else if (strcicmp(&text[current], "true") == 0)
+                    token->type = TRUE;
+                else if (strcicmp(&text[current], "var") == 0)
+                    token->type = VAR;
+                else if (strcicmp(&text[current], "while") == 0)
+                    token->type = WHILE;
+                else if (strcicmp(&text[current], "fun") == 0)
+                    token->type = FUN;
+                else if (is_alpha(peek())) {
                     identifier(token);
                     break;
                 }
-                if (strcicmp(&text[current], "and")) token->type = AND;
-                if (strcicmp(&text[current], "class")) token->type = CLASS;
-                if (strcicmp(&text[current], "else")) token->type = ELSE;
-                if (strcicmp(&text[current], "false")) token->type = FALSE;
-                if (strcicmp(&text[current], "for")) token->type = FOR;
-                if (strcicmp(&text[current], "if")) token->type = IF;
-                if (strcicmp(&text[current], "nil")) token->type = NIL;
-                if (strcicmp(&text[current], "or")) token->type = OR;
-                if (strcicmp(&text[current], "print")) token->type = PRINT;
-                if (strcicmp(&text[current], "return")) token->type = RETURN;
-                if (strcicmp(&text[current], "super")) token->type = SUPER;
-                if (strcicmp(&text[current], "this")) token->type = THIS;
-                if (strcicmp(&text[current], "true")) token->type = TRUE;
-                if (strcicmp(&text[current], "var")) token->type = VAR;
-                if (strcicmp(&text[current], "while")) token->type = WHILE;
+
+                if (token->type != -1) { break; }
 
                 fprintf(stderr, "Unexpected character: %c on line: %ld\n", c,
                         line);
@@ -254,6 +279,9 @@ void print_token(Token *token) {
             break;
         case IDENTIFIER:
             printf("IDENTIFIER: %s", token->lexeme);
+            break;
+        case NUMBER:
+            printf("NUMBER: %.1f", *(double *)token->literal);
             break;
         default:
             printf("Other: %ld", token->type);
