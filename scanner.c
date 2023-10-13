@@ -60,25 +60,23 @@ void number(Token *token) {
         while (is_digit(peek())) advance();
     }
     char *string = (char *)malloc(current - start);
-    // Token *token = (Token *)malloc(sizeof(Token));
     token->line = line;
     token->type = NUMBER;
-    memcpy(string, text + current, current - start);
+    strncpy(string, &text[start], current - start);
     double *num = (double *)malloc(sizeof(double));
     *num = atof(string);
     token->literal = num;
     free(string);
-    // return token;
 }
 
 void identifier(Token *token) {
-    // size_t start;
-    // Token *token = (Token *)malloc(sizeof(Token));
+    size_t start = current;
     token->type = IDENTIFIER;
 
     while (is_alphanumeric(peek())) advance();
-
-    // return token;
+    char *string = (char *)malloc(current - start);
+    strncpy(string, &text[start], current - start);
+    token->lexeme = string;
 }
 
 void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
@@ -91,101 +89,175 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
         Token *token = (Token *)malloc(sizeof(Token));
         char c = text[current];
         switch (c) {
-        case '(':
-            token->type = LEFT_PAREN;
-            break;
-        case ')':
-            token->type = RIGHT_PAREN;
-            break;
-        case '{':
-            token->type = LEFT_BRACE;
-            break;
-        case '}':
-            token->type = RIGHT_BRACE;
-            break;
-        case ',':
-            token->type = COMMA;
-            break;
-        case '.':
-            token->type = DOT;
-            break;
-        case '-':
-            token->type = MINUS;
-            break;
-        case '+':
-            token->type = PLUS;
-            break;
-        case ';':
-            token->type = SEMICOLON;
-            break;
-        case '*':
-            token->type = STAR;
-            break;
-        case '!':
-            token->type = (match_next('=') ? BANG_EQUAL : BANG);
-            break;
-        case '=':
-            token->type = (match_next('=') ? EQUAL_EQUAL : EQUAL);
-            break;
-        case '<':
-            token->type = (match_next('=') ? LESS_EQUAL : LESS);
-            break;
-        case '>':
-            token->type = (match_next('=') ? GREATER_EQUAL : GREATER);
-            break;
-        case '/':
-            if (match_next('/')) {
-                while (text[current] != '\n' && !(current >= length)) current++;
+            case '(':
+                token->type = LEFT_PAREN;
+                break;
+            case ')':
+                token->type = RIGHT_PAREN;
+                break;
+            case '{':
+                token->type = LEFT_BRACE;
+                break;
+            case '}':
+                token->type = RIGHT_BRACE;
+                break;
+            case ',':
+                token->type = COMMA;
+                break;
+            case '.':
+                token->type = DOT;
+                break;
+            case '-':
+                token->type = MINUS;
+                break;
+            case '+':
+                token->type = PLUS;
+                break;
+            case ';':
+                token->type = SEMICOLON;
+                break;
+            case '*':
+                token->type = STAR;
+                break;
+            case '!':
+                token->type = (match_next('=') ? BANG_EQUAL : BANG);
+                break;
+            case '=':
+                token->type = (match_next('=') ? EQUAL_EQUAL : EQUAL);
+                break;
+            case '<':
+                token->type = (match_next('=') ? LESS_EQUAL : LESS);
+                break;
+            case '>':
+                token->type = (match_next('=') ? GREATER_EQUAL : GREATER);
+                break;
+            case '/':
+                if (match_next('/')) {
+                    while (text[current] != '\n' && !(current >= length))
+                        current++;
+                    free(token);
+                    goto skip_add;
+                } else {
+                    token->type = SLASH;
+                }
+                break;
+            case ' ':
+            case '\r':
+            case '\t':
                 free(token);
                 goto skip_add;
-            } else {
-                token->type = SLASH;
-            }
-            break;
-        case ' ':
-        case '\r':
-        case '\t':
-            free(token);
-            goto skip_add;
-        case '\n':
-            line++;
-            goto skip_add;
-        case '\0':
-            token->type = ENDOFFILE;
-            break;
-        case '"':
-            string(token);
-            break;
-        default:
-            if (is_digit(text[current])) {
-                number(token);
+            case '\n':
+                line++;
+                goto skip_add;
+            case '\0':
+                token->type = ENDOFFILE;
                 break;
-            } else if (is_alpha(peek())) {
-                identifier(token);
+            case '"':
+                string(token);
                 break;
-            }
-            if (strcicmp(&text[current], "and")) token->type = AND;
-            if (strcicmp(&text[current], "class")) token->type = CLASS;
-            if (strcicmp(&text[current], "else")) token->type = ELSE;
-            if (strcicmp(&text[current], "false")) token->type = FALSE;
-            if (strcicmp(&text[current], "for")) token->type = FOR;
-            if (strcicmp(&text[current], "if")) token->type = IF;
-            if (strcicmp(&text[current], "nil")) token->type = NIL;
-            if (strcicmp(&text[current], "or")) token->type = OR;
-            if (strcicmp(&text[current], "print")) token->type = PRINT;
-            if (strcicmp(&text[current], "return")) token->type = RETURN;
-            if (strcicmp(&text[current], "super")) token->type = SUPER;
-            if (strcicmp(&text[current], "this")) token->type = THIS;
-            if (strcicmp(&text[current], "true")) token->type = TRUE;
-            if (strcicmp(&text[current], "var")) token->type = VAR;
-            if (strcicmp(&text[current], "while")) token->type = WHILE;
-            fprintf(stderr, "Unexpected character: %c on line: %ld\n", c, line);
-            break;
+            default:
+                if (is_digit(text[current])) {
+                    number(token);
+                    break;
+                } else if (is_alpha(peek())) {
+                    identifier(token);
+                    break;
+                }
+                if (strcicmp(&text[current], "and")) token->type = AND;
+                if (strcicmp(&text[current], "class")) token->type = CLASS;
+                if (strcicmp(&text[current], "else")) token->type = ELSE;
+                if (strcicmp(&text[current], "false")) token->type = FALSE;
+                if (strcicmp(&text[current], "for")) token->type = FOR;
+                if (strcicmp(&text[current], "if")) token->type = IF;
+                if (strcicmp(&text[current], "nil")) token->type = NIL;
+                if (strcicmp(&text[current], "or")) token->type = OR;
+                if (strcicmp(&text[current], "print")) token->type = PRINT;
+                if (strcicmp(&text[current], "return")) token->type = RETURN;
+                if (strcicmp(&text[current], "super")) token->type = SUPER;
+                if (strcicmp(&text[current], "this")) token->type = THIS;
+                if (strcicmp(&text[current], "true")) token->type = TRUE;
+                if (strcicmp(&text[current], "var")) token->type = VAR;
+                if (strcicmp(&text[current], "while")) token->type = WHILE;
+
+                fprintf(stderr, "Unexpected character: %c on line: %ld\n", c,
+                        line);
+                break;
         }
-        printf("%ld\n", token->type);
+        print_token(token);
         list_add(tokens, token);
         (*num_tokens)++;
     skip_add:
         current++;
     }
+}
+
+void print_token(Token *token) {
+    printf("<");
+    switch (token->type) {
+        case LEFT_PAREN:
+        case RIGHT_PAREN:
+            printf("PAREN");
+            break;
+        case LEFT_BRACE:
+        case RIGHT_BRACE:
+            printf("BRACE");
+            break;
+        case COMMA:
+        case DOT:
+            printf("PUNCTUATION");
+            break;
+        case STAR:
+        case SLASH:
+        case MINUS:
+        case PLUS:
+            printf("MATH");
+            break;
+        case SEMICOLON:
+            printf("SEMICOLON");
+            break;
+        case BANG:
+        case BANG_EQUAL:
+        case EQUAL:
+        case EQUAL_EQUAL:
+            printf("EQUALITY");
+            break;
+        case GREATER:
+        case GREATER_EQUAL:
+        case LESS:
+        case LESS_EQUAL:
+            printf("MATH_EQUALITY");
+            break;
+        case AND:
+        case OR:
+            printf("BOOLEAN_OPERATOR");
+            break;
+        case CLASS:
+            printf("CLASS");
+            break;
+        case IF:
+        case ELSE:
+            printf("CONDITIONAL");
+            break;
+        case TRUE:
+        case FALSE:
+            printf("BOOLEAN");
+            break;
+        case FUN:
+            printf("FUNCTION");
+            break;
+        case FOR:
+        case WHILE:
+            printf("LOOP");
+            break;
+        case NIL:
+            printf("NIL");
+            break;
+        case IDENTIFIER:
+            printf("IDENTIFIER: %s", token->lexeme);
+            break;
+        default:
+            printf("Other: %ld", token->type);
+            break;
+    }
+    printf(">, ");
 }
