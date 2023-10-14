@@ -44,39 +44,38 @@ void string(Token *token) {
     advance();
 
     char *string = (char *)malloc(current - start);
-    // Token *token = (Token *)malloc(sizeof(Token));
     token->line = line;
     token->type = STRING;
     token->literal = string;
     memcpy(string, text + current, current - start);
-    // return token;
 }
 
 void number(Token *token) {
     size_t start = current;
-    while (is_digit(peek())) advance();
+    while (is_digit(peek_next())) advance();
     if (peek() == '.' && is_digit(peek_next())) {
         advance();
-        while (is_digit(peek())) advance();
+        while (is_digit(peek_next())) advance();
     }
-    char *string = (char *)malloc(current - start);
-    token->line = line;
+    char *string = (char *)malloc(current - start + 1);
     token->type = NUMBER;
-    strncpy(string, &text[start], current - start);
+    strncpy(string, &text[start], current - start + 1);
     double *num = (double *)malloc(sizeof(double));
     *num = atof(string);
     token->literal = num;
     free(string);
+    // current--;
 }
 
 void identifier(Token *token) {
     size_t start = current;
     token->type = IDENTIFIER;
 
-    while (is_alphanumeric(peek())) advance();
-    char *string = (char *)malloc(current - start);
-    strncpy(string, &text[start], current - start);
+    while (is_alphanumeric(peek_next())) advance();
+    char *string = (char *)malloc(current - start + 1);
+    strncpy(string, &text[start], current - start + 1);
     token->lexeme = string;
+    // current--;
 }
 
 void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
@@ -89,6 +88,7 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
         Token *token = (Token *)malloc(sizeof(Token));
         token->type = -1;
         char c = text[current];
+        // printf("%c\n", c);
         switch (c) {
             case '(':
                 token->type = LEFT_PAREN;
@@ -161,11 +161,7 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
                 if (is_digit(peek())) {
                     number(token);
                     break;
-                } /*else if (is_alpha(peek())) {
-                    identifier(token);
-                    break;
-                }*/
-                else if (strcicmp(&text[current], "and") == 0)
+                } else if (strcicmp(&text[current], "and") == 0)
                     token->type = AND;
                 else if (strcicmp(&text[current], "class") == 0)
                     token->type = CLASS;
@@ -210,7 +206,7 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
         }
         print_token(token);
         list_add(tokens, token);
-        (*num_tokens)++;
+        (*num_tokens) += 1;
     skip_add:
         current++;
     }
@@ -240,11 +236,12 @@ void print_token(Token *token) {
         case SEMICOLON:
             printf("SEMICOLON");
             break;
-        case BANG:
         case BANG_EQUAL:
-        case EQUAL:
         case EQUAL_EQUAL:
             printf("EQUALITY");
+            break;
+        case EQUAL:
+            printf("ASSIGNMENT");
             break;
         case GREATER:
         case GREATER_EQUAL:
@@ -254,6 +251,7 @@ void print_token(Token *token) {
             break;
         case AND:
         case OR:
+        case BANG:
             printf("BOOLEAN_OPERATOR");
             break;
         case CLASS:
@@ -283,9 +281,12 @@ void print_token(Token *token) {
         case NUMBER:
             printf("NUMBER: %.1f", *(double *)token->literal);
             break;
+        case STRING:
+            printf("STRING: %s", (char *)token->literal);
+            break;
         default:
             printf("Other: %ld", token->type);
             break;
     }
-    printf(">, ");
+    printf(">\n");
 }
