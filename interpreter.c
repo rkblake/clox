@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "linkedlist.h"
 #include "scanner.h"
@@ -19,13 +20,10 @@ void run(char *text, size_t size) {
     size_t num_tokens = 0;
     LinkedList *tokens = create_list();
     scan_tokens(text, size, &num_tokens, tokens);
-    // printf("%ld\n", num_tokens);
 
-    Node *node = tokens->head;
-    while (node->next != NULL) {
-        // printf("%ld\n", ((Token *)(node->data))->type);
-        node = node->next;
-    }
+    // Node *node = tokens->head;
+    // while (node->next != NULL) { node = node->next; }
+    free(tokens);
 }
 
 int run_file(char *path) {
@@ -57,8 +55,10 @@ int run_file(char *path) {
 void run_prompt() {
     char buffer[255];
     while (1) {
+        memset(&buffer, 0, 255);
         printf("> ");
         fgets(buffer, 255, stdin);
+        // printf("%s\n", buffer);
         run(buffer, 255);
     }
 }

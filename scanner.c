@@ -82,6 +82,8 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
 
     text = _text;
     length = _length;
+    current = 0;
+    line = 0;
 
     while (!is_at_end()) {
         Token *token = (Token *)malloc(sizeof(Token));
@@ -212,6 +214,7 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
         print_token(token);
         list_add(tokens, token);
         (*num_tokens) += 1;
+        if (token->type == ENDOFFILE) break;
     skip_add:
         current++;
     }
@@ -291,6 +294,9 @@ void print_token(Token *token) {
             break;
         case VAR:
             printf("VAR");
+            break;
+        case ENDOFFILE:
+            printf("ENDOFFILE");
             break;
         default:
             printf("Other: %ld", token->type);
