@@ -1,0 +1,7 @@
+include io
+
+main: const fn = (argc: int, argv: string[]): int => {
+    io.print("hello world!\n")
+
+    return 0
+}

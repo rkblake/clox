@@ -1,7 +1,14 @@
 #pragma once
 
 #include "linkedlist.h"
-#include "scanner.h"
-#include "syntax.h"
 
-Program *parse(LinkedList *tokens);
+enum { ADD, SUBTRACT, MULTIPLY, DIVIDE, INT_LIT };
+
+typedef struct AstNode {
+	int op;
+	struct AstNode *left;
+	struct AstNode *right;
+	int int_value;
+} AstNode;
+
+void parse(LinkedList *tokens);

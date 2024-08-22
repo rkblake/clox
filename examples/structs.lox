@@ -1,0 +1,28 @@
+foo: struct = {
+    a: int
+    b: string
+    c: union = {
+        d: i64
+        e: u32
+    }
+    f: bool
+    g: null | f64
+}
+
+main := () => {
+    bar: foo = {5, 'a', 5, true, null}
+}
+
+tuple_func := (): (int, string) => {
+    return (5, "hello")
+}
+
+foo: struct = {
+    x: i32
+    y: i32
+}
+
+foo::operator + := (rh: const foo): foo => {
+    ret: foo = {.x + rh.x, .y + rh.y}
+    return ret
+}

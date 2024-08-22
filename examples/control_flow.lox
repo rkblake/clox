@@ -1,0 +1,23 @@
+include io
+
+main: fn = (argc: int, argv: array[string]): int => {
+    x: const int = 5
+    y: auto = 7.0 // type inference
+    z := x // inference shorthand
+
+    if x == 5 {
+        print("x is 5")       
+    }
+
+    // loop iterators can be made const and are only modifiable
+    // by the loop header
+    for i: const int in range(10) {
+        print(f"{i}")
+    }
+
+    arr: i64[] = [0,1,2,3,4]
+
+    arr2 := [x % 2 | for x in range(10)] // arr2 = [0,2,4,6,8]
+    
+    io.print(arr2[2:4]) // prints [4,6,8]
+}

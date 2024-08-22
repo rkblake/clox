@@ -1,63 +1,47 @@
 #include "parser.h"
+#include "scanner.h"
+#include <malloc.h>
+#include <stdlib.h>
 
-#include "stack.h"
+AstNode *makeAstNode(int op, AstNode *left, AstNode *right, int int_value) {
+	AstNode *n = (AstNode *)malloc(sizeof(AstNode));
+	if (n == NULL) {
+		fprintf(stderr, "Unable to malloc in make_ast_node\n");
+		exit(-1);
+	}
+	n->op = op;
+	n->left = left;
+	n->right = right;
+	n->int_value = int_value;
 
-#include <stdbool.h>
-
-Node *parser_current;
-Program *program;
-LinkedList *tokens;
-Stack stack;
-
-Token *previous() {
-    Node *node = tokens->head;
-    while (node->next != NULL) {
-        if (node->next == parser_current) return node->data;
-    }
-    return NULL;
-}
-Token *parser_peek() { return parser_current->data; }
-bool parser_is_at_end() { return parser_peek()->type == ENDOFFILE; }
-
-bool check(enum TOKEN_TYPE type) {
-    if (parser_is_at_end()) return false;
-    return parser_peek()->type == type;
+	return n;
 }
 
-Token *parser_advance() {
-    if (!parser_is_at_end()) parser_current = parser_current->next;
-    return previous();
+AstNode *makeAstLeaf(int op, int int_value) {
+	return makeAstNode(op, NULL, NULL, int_value);
 }
 
-bool match(enum TOKEN_TYPE *types, int num_types) {
-    for (int i = 0; i < num_types; i++) {
-        if (check(types[i])) {
-            parser_advance();
-            return true;
-        }
-    }
-    return false;
+AstNode *makeAstUnary(int op, AstNode *left, int int_value) {
+	return makeAstNode(op, left, NULL, int_value);
 }
 
-Expr *equality() {
-    // Expr expr = comparison();
-    enum TOKEN_TYPE tok[] = {BANG_EQUAL, EQUAL_EQUAL};
-    while (match(tok, 2)) {
-        //
-        Token operator;
-    }
+int arithOp(int tok) {
+	switch (tok) {
+	case PLUS:
+		return ADD;
+		break;
+	case MINUS:
+		return SUBTRACT;
+		break;
+	case STAR:
+		return MULTIPLY;
+		break;
+	case SLASH:
+		return DIVIDE;
+		break;
+	default:
+		fprintf(stderr, "unkown token in arithOp\n");
+	}
 }
 
-Program *parse(LinkedList *_tokens) {
-    tokens = _tokens;
-    program = (Program *)malloc(sizeof(Program));
-    program->type = PROGRAM;
-
-    parser_current = tokens->head;
-    while (parser_current->next != NULL) {
-        //
-        parser_current = parser_current->next;
-    }
-
-    return program;
-}
+void parse(LinkedList *tokens) {}
