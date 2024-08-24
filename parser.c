@@ -1,8 +1,11 @@
 #include "parser.h"
+#include "ast.h"
 #include "scanner.h"
+#include "tokens.h"
 #include <malloc.h>
 #include <stdlib.h>
 
+#if 0
 AstNode *makeAstNode(int op, AstNode *left, AstNode *right, int int_value) {
 	AstNode *n = (AstNode *)malloc(sizeof(AstNode));
 	if (n == NULL) {
@@ -41,6 +44,23 @@ int arithOp(int tok) {
 		break;
 	default:
 		fprintf(stderr, "unkown token in arithOp\n");
+	}
+	return 0;
+}
+#endif
+
+Token *current_token;
+
+AstNode *parse_expr();
+AstNode *parse_term();
+AstNode *parse_factor();
+
+AstNode *parse_expr() {
+	/* AstNode *node = parse_term(); */
+
+	while (current_token->type == PLUS || current_token->type == MINUS) {
+		AstNode *new_node = (AstNode *)malloc(sizeof(AstNode));
+		new_node->type = AST_OPERATOR;
 	}
 }
 

@@ -9,13 +9,15 @@
 
 bool had_error = false;
 
-void report(size_t line, char *where, char *message) {
+void report(const size_t line, const char *where, const char *message) {
 	fprintf(stderr, "ERROR [path:%ld] %s\n", line, where);
 	fprintf(stderr, "%s\n\n", message);
 	had_error = true;
 }
 
-void error(size_t line, char *message) { report(line, "", message); }
+void error(const size_t line, const char *message) {
+	report(line, "", message);
+}
 
 void run(char *text, size_t size) {
 	size_t num_tokens = 0;

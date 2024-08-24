@@ -1,7 +1,7 @@
 #pragma once
 
 // clang-format off
-enum TOKEN_TYPE {
+typedef enum {
     LEFT_PAREN, RIGHT_PAREN,
     LEFT_BRACE, RIGHT_BRACE,
     COMMA, DOT, STAR, SLASH,
@@ -24,5 +24,5 @@ enum TOKEN_TYPE {
     SUPER, THIS,
     VAR,
     ENDOFFILE
-};
+} TOKEN_TYPE;
 // clang-format on
