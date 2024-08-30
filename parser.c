@@ -49,19 +49,35 @@ int arithOp(int tok) {
 }
 #endif
 
-Token *current_token;
+// Token *current_token;
+Node *current_token;
 
 AstNode *parse_expr();
 AstNode *parse_term();
 AstNode *parse_factor();
 
 AstNode *parse_expr() {
-	/* AstNode *node = parse_term(); */
+	AstNode *node = parse_term();
 
 	while (current_token->type == PLUS || current_token->type == MINUS) {
 		AstNode *new_node = (AstNode *)malloc(sizeof(AstNode));
 		new_node->type = AST_OPERATOR;
+		new_node->value.op.operator = current_token->type;
+		new_node->value.op.left = node;
+
+		next_token();
+		new_node->value.op.right = parse_term();
+
+		node = new_node;
 	}
+
+	return node;
 }
 
-void parse(LinkedList *tokens) {}
+AstNode* parse_term() {
+	return 0;
+}
+
+void parse(LinkedList *tokens) {
+	current_token = tokens;
+}
