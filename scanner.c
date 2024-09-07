@@ -69,8 +69,8 @@ void number(Token *token) {
 	char *string = (char *)malloc(current - start + 1);
 	token->type = NUMBER;
 	strncpy(string, &text[start], current - start + 1);
-	double *num = (double *)malloc(sizeof(double));
-	*num = atof(string);
+	int *num = (int *)malloc(sizeof(int));
+	*num = atoi(string);
 	token->literal = num;
 	free(string);
 }
@@ -299,7 +299,7 @@ void print_token(Token *token) {
 		printf("IDENTIFIER: %s", token->lexeme);
 		break;
 	case NUMBER:
-		printf("NUMBER: %.1f", *(double *)token->literal);
+		printf("NUMBER: %d", *(int *)token->literal);
 		break;
 	case STRING:
 		printf("STRING: \"%s\"", (char *)token->literal);
