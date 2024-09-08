@@ -31,4 +31,4 @@ typedef struct AstNode {
 	int int_value;
 } AstNode;
 #endif
-void parse(LinkedList *tokens);
+AstNode *parse(LinkedList *tokens);

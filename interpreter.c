@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "gen.h"
 #include "linkedlist.h"
 #include "parser.h"
 #include "scanner.h"
@@ -23,7 +24,8 @@ void run(char *text, size_t size) {
 	size_t num_tokens = 0;
 	LinkedList *tokens = create_list();
 	scan_tokens(text, size, &num_tokens, tokens);
-	parse(tokens);
+	AstNode *root = parse(tokens);
+	generate_x86(root);
 
 	// Node *node = tokens->head;
 	// while (node->next != NULL) { node = node->next; }

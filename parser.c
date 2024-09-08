@@ -17,7 +17,6 @@ AstNode *makeAstNode(int op, AstNode *left, AstNode *right, int int_value) {
 	n->right = right;
 	n->int_value = int_value;
 
-	printf("made ast node\n");
 	return n;
 }
 
@@ -31,20 +30,11 @@ AstNode *makeAstUnary(int op, AstNode *left, int int_value) {
 
 int arithOp(int tok) {
 	switch (tok) {
-	case PLUS:
-		return AST_ADD;
-		break;
-	case MINUS:
-		return AST_SUBTRACT;
-		break;
-	case STAR:
-		return AST_MULTIPLY;
-		break;
-	case SLASH:
-		return AST_DIVIDE;
-		break;
-	default:
-		fprintf(stderr, "unkown token in arithOp\n");
+		case PLUS: return AST_ADD;
+		case MINUS: return AST_SUBTRACT;
+		case STAR: return AST_MULTIPLY;
+		case SLASH: return AST_DIVIDE;
+		default: fprintf(stderr, "unkown token in arithOp %d\n", tok);
 	}
 	return 0;
 }
@@ -52,10 +42,6 @@ int arithOp(int tok) {
 
 Token *current_token;
 Node *current_node;
-
-/* AstNode *binexpr(); */
-/* AstNode *parse_multiplicative(); */
-/* AstNode *parse_factor(); */
 
 void next_token() {
 	current_node = current_node->next;
@@ -76,14 +62,11 @@ int op_precedence(int token_type) {
 AstNode *primary() {
 	AstNode *n;
 	switch (current_token->type) {
-	case NUMBER:
-		n = makeAstLeaf(AST_INTLIT, *(int *)(current_token->literal));
-		printf("%d\n", *(int *)(current_token->literal));
-		next_token();
-		return n;
-	default:
-		fprintf(stderr, "syntax error\n");
-		exit(1);
+		case NUMBER:
+			n = makeAstLeaf(AST_INTLIT, *(int *)(current_token->literal));
+			next_token();
+			return n;
+		default: fprintf(stderr, "syntax error\n"); exit(1);
 	}
 }
 
@@ -94,27 +77,23 @@ AstNode *binexpr(int prev_tok_prec) {
 	left = primary();
 
 	token_type = current_token->type;
-	if (token_type == AST_EOF)
-		return left;
+	int ast_type = arithOp(token_type);
+	if (token_type == ENDOFFILE) return left;
 
-	while (op_precedence(token_type) > prev_tok_prec) {
+	while (op_precedence(ast_type) > prev_tok_prec) {
 		next_token();
 
-		right = binexpr(op_prec[token_type]);
+		right = binexpr(op_prec[ast_type]);
 
 		left = makeAstNode(arithOp(token_type), left, right, 0);
 
 		token_type = current_token->type;
-		if (token_type == AST_EOF)
-			return left;
+		ast_type = arithOp(token_type);
+		if (ast_type == AST_EOF) return left;
 	}
 
 	return left;
 }
-
-/* AstNode *parse_multiplicative() { return 0; } */
-
-/* AstNode *parse_factor() { return 0; } */
 
 void print_tree(AstNode *node, int depth) {
 	for (int i = 0; i < depth; i++) {
@@ -133,33 +112,27 @@ void print_tree(AstNode *node, int depth) {
 int interpret_ast(AstNode *node) {
 	int leftval, rightval;
 
-	if (node->left)
-		leftval = interpret_ast(node->left);
-	if (node->right)
-		rightval = interpret_ast(node->right);
+	if (node->left) leftval = interpret_ast(node->left);
+	if (node->right) rightval = interpret_ast(node->right);
 
 	switch (node->op) {
-	case AST_ADD:
-		return leftval + rightval;
-	case AST_SUBTRACT:
-		return leftval - rightval;
-	case AST_MULTIPLY:
-		return leftval * rightval;
-	case AST_DIVIDE:
-		return leftval / rightval;
-	case AST_INTLIT:
-		return node->int_value;
-	default:
-		fprintf(stderr, "unknown op\n");
-		exit(1);
+		case AST_ADD: return leftval + rightval;
+		case AST_SUBTRACT: return leftval - rightval;
+		case AST_MULTIPLY: return leftval * rightval;
+		case AST_DIVIDE: return leftval / rightval;
+		case AST_INTLIT: return node->int_value;
+		default: fprintf(stderr, "unknown op %d\n", node->op); exit(1);
 	}
 }
 
-void parse(LinkedList *tokens) {
+AstNode *parse(LinkedList *tokens) {
 	current_node = tokens->head;
 	current_token = current_node->data;
 
 	AstNode *root = binexpr(0);
-	/* print_tree(root, 0); */
-	printf("%d\n", interpret_ast(root));
+	printf("Print AST:\n");
+	print_tree(root, 0);
+	printf("eval: %d\n", interpret_ast(root));
+
+	return root;
 }
