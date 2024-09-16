@@ -34,6 +34,7 @@ int arithOp(int tok) {
 		case MINUS: return AST_SUBTRACT;
 		case STAR: return AST_MULTIPLY;
 		case SLASH: return AST_DIVIDE;
+		case ENDOFFILE: return AST_EOF;
 		default: fprintf(stderr, "unkown token in arithOp %d\n", tok);
 	}
 	return 0;

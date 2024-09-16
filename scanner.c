@@ -35,9 +35,9 @@ bool match_next(char match) {
 	return true;
 }
 
-void string(Token *token) {
+void string(Token *token, char delim) {
 	size_t start = current + 1;
-	while (peek_next() != '"' && !is_at_end()) {
+	while (peek_next() != delim && !is_at_end()) {
 		// if (peek_next() == '\n') line++;
 		advance();
 	}
@@ -107,6 +107,9 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
 			case '-': token->type = MINUS; break;
 			case '+': token->type = PLUS; break;
 			case ';': token->type = SEMICOLON; break;
+			case ':':
+			    token->type =(match_next('=') ? COLON_EQUAL: COLON);
+			    break;
 			case '*': token->type = STAR; break;
 			case '!':
 				token->type = (match_next('=') ? BANG_EQUAL : BANG);
@@ -138,7 +141,8 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
 				free(token);
 				goto skip_add;
 			case '\0': token->type = ENDOFFILE; break;
-			case '"': string(token); break;
+			case '"': string(token, '"'); break;
+			case '\'': string(token, '\''); break;
 			default:
 				if (is_digit(peek())) {
 					number(token);

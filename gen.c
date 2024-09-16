@@ -77,10 +77,31 @@ int cg_add(int r1, int r2) {
 	return r2;
 }
 
+int cg_subtract(int r1, int r2) {
+	fprintf(out, "\tsubq\t%s, %s\n", reg_list[r2], reg_list[r1]);
+	free_register(r1);
+	return r2;
+}
+
 int cg_mult(int r1, int r2) {
 	fprintf(out, "\timulq\t%s, %s\n", reg_list[r1], reg_list[r2]);
 	free_register(r1);
 	return r2;
+}
+
+int cg_divide(int r1, int r2) {
+	fprintf(out, "\tmovq\t%s,%%rax\n", reg_list[r1]);
+	fprintf(out, "\tcqo\n");
+	fprintf(out, "\tidivq\t%s\n", reg_list[r2]);
+	fprintf(out, "movq\t%%rax,%s\n", reg_list[r1]);
+	free_register(r2);
+	return r1;
+}
+
+void cg_printint(int r) {
+	fprintf(out, "\tmovq\t%s, %%rdi\n", reg_list[r]);
+	fprintf(out, "\tcall\tprintint\n");
+	free_register(r);
 }
 
 static int gen_ast(AstNode *node) {
@@ -91,7 +112,9 @@ static int gen_ast(AstNode *node) {
 
 	switch (node->op) {
 		case AST_ADD: return cg_add(left_reg, right_reg);
+		case AST_SUBTRACT: return cg_subtract(left_reg, right_reg);
 		case AST_MULTIPLY: return cg_mult(left_reg, right_reg);
+		case AST_DIVIDE: return cg_divide(left_reg, right_reg);
 		case AST_INTLIT: return cg_load(node->int_value);
 
 		default: fprintf(stderr, "unknow ast op\n"); exit(1);
@@ -104,5 +127,6 @@ void generate_x86(AstNode *node) {
 
 	cg_preamble();
 	reg = gen_ast(node);
+	cg_printint(reg);
 	cg_postamble();
 }
