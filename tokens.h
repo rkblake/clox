@@ -16,13 +16,14 @@ typedef enum {
     CLASS,
     IF, ELSE,
     TRUE, FALSE,
-    FUN,
+    FUNC,
     FOR, WHILE,
     NIL,
     PRINT,
     RETURN,
     SUPER, THIS,
     VAR,
+    INT, FLOAT, ARRAY,
     ENDOFFILE
 } TOKEN_TYPE;
 // clang-format on

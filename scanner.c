@@ -96,7 +96,6 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
 		Token *token = (Token *)malloc(sizeof(Token));
 		token->type = -1;
 		char c = text[current];
-		// printf("%c\n", c);
 		switch (c) {
 			case '(': token->type = LEFT_PAREN; break;
 			case ')': token->type = RIGHT_PAREN; break;
@@ -182,8 +181,11 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
 					current += 3;
 				} else if (strcicmp(&text[current], "while") == 0) {
 					token->type = WHILE;
-				} else if (strcicmp(&text[current], "fun") == 0) {
-					token->type = FUN;
+				} else if (strcicmp(&text[current], "fn") == 0) {
+					token->type = FUNC;
+					current += 2;
+				} else if (strcicmp(&text[current], "int") == 0) {
+					token->type = INT;
 					current += 3;
 				} else if (is_alpha(peek())) {
 					identifier(token);
@@ -236,7 +238,7 @@ void print_token(Token *token) {
 		case ELSE: printf("CONDITIONAL"); break;
 		case TRUE:
 		case FALSE: printf("BOOLEAN"); break;
-		case FUN: printf("FUNCTION"); break;
+		case FUNC: printf("FUNCTION"); break;
 		case FOR:
 		case WHILE: printf("LOOP"); break;
 		case NIL: printf("NIL"); break;

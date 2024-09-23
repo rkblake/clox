@@ -1,3 +1,4 @@
 *.o
 clox
 .clang-format
+*.s

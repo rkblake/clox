@@ -60,13 +60,22 @@ int op_precedence(int token_type) {
 	return prec;
 }
 
+extern int find_glob(char *);
+
 AstNode *primary() {
 	AstNode *n;
+	int id;
 	switch (current_token->type) {
 		case NUMBER:
 			n = makeAstLeaf(AST_INTLIT, *(int *)(current_token->literal));
 			next_token();
 			return n;
+		case IDENTIFIER:
+			id = find_glob(current_token->lexeme);
+			if (id == -1) {
+				fprintf(stderr, "unknown variable %s\n", current_token->lexeme);
+				exit(1);
+			}
 		default: fprintf(stderr, "syntax error\n"); exit(1);
 	}
 }
@@ -79,7 +88,7 @@ AstNode *binexpr(int prev_tok_prec) {
 
 	token_type = current_token->type;
 	int ast_type = arithOp(token_type);
-	if (token_type == ENDOFFILE) return left;
+	if (token_type == SEMICOLON) return left;
 
 	while (op_precedence(ast_type) > prev_tok_prec) {
 		next_token();
@@ -90,7 +99,7 @@ AstNode *binexpr(int prev_tok_prec) {
 
 		token_type = current_token->type;
 		ast_type = arithOp(token_type);
-		if (ast_type == AST_EOF) return left;
+		if (token_type == SEMICOLON) return left;
 	}
 
 	return left;

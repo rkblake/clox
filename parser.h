@@ -24,11 +24,21 @@ typedef struct AstNode {
 	} value;
 } AstNode;
 #else
+
 typedef struct AstNode {
 	int op;
 	struct AstNode *left;
 	struct AstNode *right;
-	int int_value;
+	union {
+		int int_value;
+		float float_value;
+		int id;
+	};
 } AstNode;
+
+struct symbol_table {
+	char *name;
+};
+
 #endif
 AstNode *parse(LinkedList *tokens);

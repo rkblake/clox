@@ -129,4 +129,6 @@ void generate_x86(AstNode *node) {
 	reg = gen_ast(node);
 	cg_printint(reg);
 	cg_postamble();
+
+	fclose(out);
 }
