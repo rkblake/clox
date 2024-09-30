@@ -17,6 +17,6 @@ typedef struct Token {
 void scan_tokens(char *text, size_t length, size_t *num_tokens,
 				 LinkedList *tokens);
 
-void print_token(Token *);
+void print_token(int);
 
 #endif

@@ -200,18 +200,22 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
 						line);
 				break;
 		}
-		print_token(token);
+		print_token(token->type);
 		list_add(tokens, token);
 		(*num_tokens) += 1;
 		if (token->type == ENDOFFILE) break;
 	skip_add:
 		current++;
 	}
+	Token *token = (Token *)malloc(sizeof(Token));
+	token->type = ENDOFFILE;
+	list_add(tokens, token);
+	(*num_tokens) += 1;
 }
 
-void print_token(Token *token) {
+void print_token(int type) {
 	printf("<");
-	switch (token->type) {
+	switch (type) {
 		case LEFT_PAREN:
 		case RIGHT_PAREN: printf("PAREN"); break;
 		case LEFT_BRACE:
@@ -242,12 +246,13 @@ void print_token(Token *token) {
 		case FOR:
 		case WHILE: printf("LOOP"); break;
 		case NIL: printf("NIL"); break;
-		case IDENTIFIER: printf("IDENTIFIER: %s", token->lexeme); break;
-		case NUMBER: printf("NUMBER: %d", *(int *)token->literal); break;
-		case STRING: printf("STRING: \"%s\"", (char *)token->literal); break;
+		case IDENTIFIER: printf("IDENTIFIER"); break;
+		case NUMBER: printf("NUMBER"/*, *(int *)token->literal*/); break;
+		case STRING: printf("STRING"/*, (char *)token->literal*/); break;
 		case VAR: printf("VAR"); break;
+		case PRINT: printf("PRINT"); break;
 		case ENDOFFILE: printf("ENDOFFILE"); break;
-		default: printf("Other: %ld", token->type); break;
+		default: printf("Other"/*, token->type*/); break;
 	}
 	printf(">\n");
 }

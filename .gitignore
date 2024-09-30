@@ -2,3 +2,4 @@
 clox
 .clang-format
 *.s
+out

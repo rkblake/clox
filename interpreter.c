@@ -9,6 +9,7 @@
 #include "scanner.h"
 
 bool had_error = false;
+extern FILE* out;
 
 void report(const size_t line, const char *where, const char *message) {
 	fprintf(stderr, "ERROR [path:%ld] %s\n", line, where);
@@ -20,16 +21,25 @@ void error(const size_t line, const char *message) {
 	report(line, "", message);
 }
 
+extern void cg_preamble();
+extern void cg_postamble();
+
 void run(char *text, size_t size) {
+	out = fopen("out.s", "w");
+
 	size_t num_tokens = 0;
 	LinkedList *tokens = create_list();
 	scan_tokens(text, size, &num_tokens, tokens);
+	cg_preamble();
 	AstNode *root = parse(tokens);
-	generate_x86(root);
+	cg_postamble();
+	// generate_x86(root);
 
 	// Node *node = tokens->head;
 	// while (node->next != NULL) { node = node->next; }
 	free(tokens);
+
+	fclose(out);
 }
 
 int run_file(char *path) {
