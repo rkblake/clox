@@ -8,5 +8,7 @@ typedef enum {
     AST_IDENT,
     AST_LVIDENT,
     AST_ASSIGNMENT,
+    AST_GLUE,
+    AST_IF,
 } AST_TYPE;
 // clang-format off

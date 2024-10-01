@@ -3,3 +3,4 @@ clox
 .clang-format
 *.s
 out
+compile-flags.txt

@@ -5,6 +5,7 @@
 typedef struct AstNode {
 	int op;
 	struct AstNode *left;
+	struct AstNode *mid;
 	struct AstNode *right;
 	union {
 		int int_value;

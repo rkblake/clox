@@ -109,8 +109,8 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
 			case '+': token->type = PLUS; break;
 			case ';': token->type = SEMICOLON; break;
 			case ':':
-			    token->type =(match_next('=') ? COLON_EQUAL: COLON);
-			    break;
+				token->type = (match_next('=') ? COLON_EQUAL : COLON);
+				break;
 			case '*': token->type = STAR; break;
 			case '!':
 				token->type = (match_next('=') ? BANG_EQUAL : BANG);
@@ -221,14 +221,14 @@ void print_token(int type) {
 	switch (type) {
 		case LEFT_PAREN:
 		case RIGHT_PAREN: printf("PAREN"); break;
-		case LEFT_BRACE:
-		case RIGHT_BRACE: printf("BRACE"); break;
+		case LEFT_BRACE: printf("LBRACE"); break;
+		case RIGHT_BRACE: printf("RBRACE"); break;
 		case COMMA:
 		case DOT: printf("PUNCTUATION"); break;
-		case STAR:
-		case SLASH:
-		case MINUS:
-		case PLUS: printf("MATH"); break;
+		case STAR: printf("STAR"); break;
+		case SLASH: printf("SLASH"); break;
+		case MINUS: printf("MINUS"); break;
+		case PLUS: printf("PLUS"); break;
 		case SEMICOLON: printf("SEMICOLON"); break;
 		case BANG_EQUAL:
 		case EQUAL_EQUAL: printf("EQUALITY"); break;
@@ -241,8 +241,8 @@ void print_token(int type) {
 		case OR:
 		case BANG: printf("BOOLEAN_OPERATOR"); break;
 		case CLASS: printf("CLASS"); break;
-		case IF:
-		case ELSE: printf("CONDITIONAL"); break;
+		case IF: printf("IF"); break;
+		case ELSE: printf("ELSE"); break;
 		case TRUE:
 		case FALSE: printf("BOOLEAN"); break;
 		case FUNC: printf("FUNCTION"); break;
@@ -250,13 +250,13 @@ void print_token(int type) {
 		case WHILE: printf("LOOP"); break;
 		case NIL: printf("NIL"); break;
 		case IDENTIFIER: printf("IDENTIFIER"); break;
-		case NUMBER: printf("NUMBER"/*, *(int *)token->literal*/); break;
-		case STRING: printf("STRING"/*, (char *)token->literal*/); break;
+		case NUMBER: printf("NUMBER" /*, *(int *)token->literal*/); break;
+		case STRING: printf("STRING" /*, (char *)token->literal*/); break;
 		case VAR: printf("VAR"); break;
 		case PRINT: printf("PRINT"); break;
 		case INT: printf("INT"); break;
 		case ENDOFFILE: printf("ENDOFFILE"); break;
-		default: printf("Other"/*, token->type*/); break;
+		default: printf("Other" /*, token->type*/); break;
 	}
 	printf(">\n");
 }
