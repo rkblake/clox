@@ -31,7 +31,7 @@ void run(char *text, size_t size) {
 	LinkedList *tokens = create_list();
 	scan_tokens(text, size, &num_tokens, tokens);
 	cg_preamble();
-	AstNode *root = parse(tokens);
+	parse(tokens);
 	cg_postamble();
 	// generate_x86(root);
 

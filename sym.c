@@ -7,7 +7,8 @@ static int Globs = 0;
 
 int find_glob(char *s) {
 	for (int i = 0; i < Globs; i++) {
-		if (sym[i].name == s) return i;
+		// if (sym[i].name == s) return i;
+		if(strcmp(sym[i].name, s) == 0) return i;
 	}
 	return -1;
 }
@@ -20,7 +21,7 @@ int add_glob(char *name) {
 
 	y = new_glob();
 
-	sym[new_glob()].name = strdup(name);
+	sym[y].name = strdup(name);
 
 	return y;
 }

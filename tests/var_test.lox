@@ -1,0 +1,5 @@
+int foo;
+int bar;
+foo = 5;
+bar = 10;
+print foo + bar;

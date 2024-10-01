@@ -79,6 +79,7 @@ void identifier(Token *token) {
 	while (is_alphanumeric(peek_next()))
 		advance();
 	char *string = (char *)malloc(current - start + 1);
+	memset(string, 0, current - start + 1);
 	strncpy(string, &text[start], current - start + 1);
 	token->lexeme = string;
 	// current--;
@@ -90,11 +91,12 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
 	text = _text;
 	length = _length;
 	current = 0;
-	line = 0;
+	line = 1;
 
 	while (!is_at_end()) {
 		Token *token = (Token *)malloc(sizeof(Token));
 		token->type = -1;
+		token->line = line;
 		char c = text[current];
 		switch (c) {
 			case '(': token->type = LEFT_PAREN; break;
@@ -139,6 +141,7 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
 				line++;
 				free(token);
 				goto skip_add;
+			case EOF:
 			case '\0': token->type = ENDOFFILE; break;
 			case '"': string(token, '"'); break;
 			case '\'': string(token, '\''); break;
@@ -200,7 +203,7 @@ void scan_tokens(char *_text, size_t _length, size_t *num_tokens,
 						line);
 				break;
 		}
-		print_token(token->type);
+		// print_token(token->type);
 		list_add(tokens, token);
 		(*num_tokens) += 1;
 		if (token->type == ENDOFFILE) break;
@@ -251,6 +254,7 @@ void print_token(int type) {
 		case STRING: printf("STRING"/*, (char *)token->literal*/); break;
 		case VAR: printf("VAR"); break;
 		case PRINT: printf("PRINT"); break;
+		case INT: printf("INT"); break;
 		case ENDOFFILE: printf("ENDOFFILE"); break;
 		default: printf("Other"/*, token->type*/); break;
 	}
